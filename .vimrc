@@ -39,6 +39,7 @@ nnoremap <leader>n :NERDTreeToggle
 "nnoremap <leader>t :TlistToggle
 nnoremap <leader>c :!ctags -R .
 
+let g:pyflakes_use_quickfix = 0
 au FileType python set omnifunc=pythoncomplete#Complete
 "let g:SuperTabDefaultCompletionType = "context"
 "set completeopt=menuone,longest,preview
