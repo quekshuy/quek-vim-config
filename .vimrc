@@ -12,7 +12,7 @@ set tabstop=4
 set shiftwidth=4
 set softtabstop=4
 set autoindent
-set smartindent
+"set smartindent
 set expandtab
 syntax on
 set showmatch
@@ -40,8 +40,8 @@ nnoremap <leader>n :NERDTreeToggle
 nnoremap <leader>c :!ctags -R .
 
 au FileType python set omnifunc=pythoncomplete#Complete
-let g:SuperTabDefaultCompletionType = "context"
-set completeopt=menuone,longest,preview
+"let g:SuperTabDefaultCompletionType = "context"
+"set completeopt=menuone,longest,preview
 
 if has("gui_macvim")
 
