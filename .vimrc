@@ -4,8 +4,8 @@ set guifont=Monaco:h12
 
 filetype on
 filetype off
-call pathogen#runtime_append_all_bundles()
-call pathogen#helptags()
+execute pathogen#infect()
+syntax on
 filetype plugin indent on 
 
 set tabstop=4
@@ -14,7 +14,6 @@ set softtabstop=4
 set autoindent
 "set smartindent
 set expandtab
-syntax on
 set showmatch
 set number
 set encoding=utf-8
