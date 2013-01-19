@@ -46,9 +46,6 @@
 [submodule "bundle/nerdcommenter"]
 	path = bundle/nerdcommenter
 	url = https://github.com/scrooloose/nerdcommenter.git
-[submodule "bundle/pyflakes-vim"]
-	path = bundle/pyflakes-vim
-	url = https://github.com/kevinw/pyflakes-vim.git
 [submodule "bundle/ctrlp"]
 	path = bundle/ctrlp
 	url = https://github.com/kien/ctrlp.vim.git
