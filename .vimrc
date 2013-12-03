@@ -1,6 +1,8 @@
 
 colorscheme torte 
-set guifont=Monaco:h12
+set guifont=Monaco:h11
+
+set rtp+=$GOROOT/misc/vim
 
 filetype on
 filetype off
@@ -33,12 +35,18 @@ inoremap <right> <nop>
 
 map <leader>dt :set makeprg=python\ manage.py\ test\|:call MakeGreen()<CR>
 map <leader>td <Plug>TaskList
+
 nnoremap <leader>a :Ack!
+let g:ackprg = 'ag --nogroup --nocolor --column'
+
 nnoremap <leader>n :NERDTreeToggle
 "nnoremap <leader>t :TlistToggle
 nnoremap <leader>c :!ctags -R .
 
-let g:pyflakes_use_quickfix = 0
+let g:syntastic_check_on_open=1
+let g:syntastic_enable_signs=1
+
+"let g:pyflakes_use_quickfix = 0
 au FileType python set omnifunc=pythoncomplete#Complete
 "let g:SuperTabDefaultCompletionType = "context"
 "set completeopt=menuone,longest,preview
