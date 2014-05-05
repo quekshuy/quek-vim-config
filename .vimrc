@@ -4,8 +4,8 @@ set guifont=Monaco:h11
 
 set rtp+=$GOROOT/misc/vim
 
-filetype on
-filetype off
+"filetype on
+"filetype off
 execute pathogen#infect()
 syntax on
 filetype plugin indent on 
@@ -39,8 +39,6 @@ map <leader>td <Plug>TaskList
 nnoremap <leader>a :Ack!
 let g:ackprg = 'ag --nogroup --nocolor --column'
 
-nnoremap <leader>n :NERDTreeToggle
-"nnoremap <leader>t :TlistToggle
 nnoremap <leader>c :!ctags -R .
 
 let g:syntastic_check_on_open=1
