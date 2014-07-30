@@ -52,7 +52,7 @@ au FileType python set omnifunc=pythoncomplete#Complete
 if has("gui_macvim")
 
 autocmd FileType python set omnifunc=pythoncomplete#Complete
-
+autocmd BufNewFile,BufReadPost *.coffee setl shiftwidth=2 expandtab tabstop=2 softtabstop=2
 inoremap <Nul> <C-x><C-o>
 
 python << EOF
