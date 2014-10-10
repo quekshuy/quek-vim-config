@@ -6,13 +6,29 @@ set rtp+=$GOROOT/misc/vim
 
 "filetype on
 "filetype off
-execute pathogen#infect()
-syntax on
-filetype plugin indent on 
+"execute pathogen#infect()
+"syntax on
+"filetype plugin indent on 
 
-set tabstop=4
-set shiftwidth=4
-set softtabstop=4
+"PLUGINS via vim plug https://github.com/junegunn/vim-plug
+
+call plug#begin()
+Plug 'rking/ag.vim'
+Plug 'kien/ctrlp.vim'
+Plug 'tpope/vim-fugitive'
+Plug 'fholgado/minibufexpl.vim'
+Plug 'scrooloose/nerdcommenter'
+Plug 'ervandew/supertab'
+Plug 'scrooloose/syntastic'
+Plug 'kchmck/vim-coffee-script'
+Plug 'fatih/vim-go'
+Plug 'tpope/vim-rails'
+Plug 'mattn/emmet-vim'
+call plug#end()
+
+set tabstop=2
+set shiftwidth=2
+set softtabstop=2
 set autoindent
 "set smartindent
 set expandtab
