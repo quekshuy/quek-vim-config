@@ -4,12 +4,6 @@ set guifont=Monaco:h11
 
 set rtp+=$GOROOT/misc/vim
 
-"filetype on
-"filetype off
-"execute pathogen#infect()
-"syntax on
-"filetype plugin indent on 
-
 "PLUGINS via vim plug https://github.com/junegunn/vim-plug
 
 call plug#begin()
@@ -52,18 +46,14 @@ inoremap <right> <nop>
 map <leader>dt :set makeprg=python\ manage.py\ test\|:call MakeGreen()<CR>
 map <leader>td <Plug>TaskList
 
-nnoremap <leader>a :Ack!
-let g:ackprg = 'ag --nogroup --nocolor --column'
+nnoremap <leader>a :Ag!
 
 nnoremap <leader>c :!ctags -R .
 
 let g:syntastic_check_on_open=1
 let g:syntastic_enable_signs=1
 
-"let g:pyflakes_use_quickfix = 0
 au FileType python set omnifunc=pythoncomplete#Complete
-"let g:SuperTabDefaultCompletionType = "context"
-"set completeopt=menuone,longest,preview
 
 if has("gui_macvim")
 
