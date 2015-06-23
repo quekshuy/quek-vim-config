@@ -2,8 +2,6 @@
 colorscheme torte 
 set guifont=Monaco:h11
 
-set rtp+=$GOROOT/misc/vim
-
 "PLUGINS via vim plug https://github.com/junegunn/vim-plug
 
 call plug#begin()
@@ -18,6 +16,8 @@ Plug 'kchmck/vim-coffee-script'
 Plug 'fatih/vim-go'
 Plug 'tpope/vim-rails'
 Plug 'mattn/emmet-vim'
+Plug 'scrooloose/nerdtree'
+Plug 'elixir-lang/vim-elixir'
 call plug#end()
 
 set tabstop=2
@@ -30,6 +30,9 @@ set showmatch
 set number
 set encoding=utf-8
 set tags=./tags,tags
+set laststatus=2
+set statusline=%{fugitive#statusline()}
+set statusline+=%f
 
 
 nnoremap / /\v
@@ -43,12 +46,15 @@ inoremap <down> <nop>
 inoremap <left> <nop>
 inoremap <right> <nop>
 
-map <leader>dt :set makeprg=python\ manage.py\ test\|:call MakeGreen()<CR>
-map <leader>td <Plug>TaskList
-
+map <leader>n :NERDTreeToggle
 nnoremap <leader>a :Ag!
 
 nnoremap <leader>c :!ctags -R .
+
+"CtrlP search mixed (files, buffers and MRU)
+let g:ctrlp_cmd='CtrlPMixed'
+"CtrlP jump to open files in other tabs
+let g:ctrlp_switch_buffer='Et'
 
 let g:syntastic_check_on_open=1
 let g:syntastic_enable_signs=1
