@@ -1,6 +1,6 @@
-
-colorscheme torte 
-set guifont=Monaco:h11
+colorscheme onedark
+"colorscheme torte 
+set guifont=Hack:h13
 
 "PLUGINS via vim plug https://github.com/junegunn/vim-plug
 
@@ -16,7 +16,6 @@ Plug 'kchmck/vim-coffee-script'
 Plug 'fatih/vim-go'
 Plug 'tpope/vim-rails'
 Plug 'mattn/emmet-vim'
-Plug 'scrooloose/nerdtree'
 Plug 'elixir-lang/vim-elixir'
 call plug#end()
 
@@ -46,7 +45,10 @@ inoremap <down> <nop>
 inoremap <left> <nop>
 inoremap <right> <nop>
 
-map <leader>n :NERDTreeToggle
+"NERDTree replacement, netrw
+let g:netrw_liststyle=3
+map <leader>n :Explore<cr>
+
 nnoremap <leader>a :Ag!
 
 nnoremap <leader>c :!ctags -R .
