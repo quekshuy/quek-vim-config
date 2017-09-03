@@ -1,21 +1,16 @@
-This is just my vim config that I use for development. 
+This is just my vim/neovim config that I use for development. 
 
 To install:
 
-_Symbolic link to vim config_
+_Symbolic link to vim config and vim directory_
 
 `ln -s /path/to/repo/.vimrc ~/.vimrc`
+`ln -s /path/to/repo ~/.vim`
 
-_Make `~/.vim` directory if not yet created_
+## (Optional) for neovim
+`ln -s /path/to/repo ~/.config/nvim`
+`ln -s /path/to/repo/.vimrc ~/.config/nvim/init.vim`
 
-`mkdir ~/.vim # if not yet created`
-
-_Put the existing plugins where they belong._
-
-`ln -s /path/to/repo/autoload ~/.vim/autoload`
-
-`ln -s /path/to/repo/plugin ~/.vim/plugin`
-
-Then launch `vim` and `:PlugInstall`.
+Then launch `vim` (or `nvim`) and `:PlugInstall`.
 
 Enjoy.
