@@ -11,7 +11,6 @@ Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all'  }
 Plug 'junegunn/fzf.vim'
 Plug 'tpope/vim-fugitive'
 Plug 'scrooloose/nerdcommenter'
-Plug 'neomake/neomake'
 Plug 'kchmck/vim-coffee-script'
 Plug 'fatih/vim-go'
 Plug 'tpope/vim-rails'
@@ -23,6 +22,17 @@ Plug 'tpope/vim-vinegar'
 Plug 'jiangmiao/auto-pairs'
 Plug 'machakann/vim-highlightedyank'
 Plug 'avdgaag/vim-phoenix'
+Plug 'pangloss/vim-javascript'
+Plug 'vim-ruby/vim-ruby'
+Plug 'posva/vim-vue'
+":Gbrowse to open current file on github
+Plug 'tpope/vim-rhubarb'
+":BD to close a buffer without closing the pane
+Plug 'qpkorr/vim-bufkill'
+":Delete, :Rename
+Plug 'tpope/vim-eunuch'
+":Linting
+Plug 'w0rp/ale'
 "NEOVIM specific plugins
 if has('nvim')
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
@@ -48,6 +58,8 @@ set noeol
 
 "Allow yank to macOS clipboard as well
 set clipboard=unnamed
+"Allows using mouse to set cursor when in Iterm
+set mouse=a
 
 "Set status line so current window is more visible
 hi StatusLine   ctermfg=15  guifg=#ffffff ctermbg=239 guibg=#4e4e4e cterm=bold gui=bold
@@ -87,6 +99,10 @@ nnoremap <leader>b :Buffers<cr>
 nnoremap <leader>w :Windows<cr>
 nnoremap <leader>g :Gstatus<cr>
 
+"Don't use vbufkill's keyboard mapping because
+"they slow down responsiveness of :Buffers
+let g:BufKillCreateMappings=0
+
 if has('nvim')
 "=================================================================
 " CHANGES FOR NVIM TERM EMULATOR
@@ -117,25 +133,25 @@ nnoremap ˚ <C-w>k
 nnoremap ¬ <C-w>l
 
 "=================================================================
-" NEOMAKE
+" NEOMAKE (uncomment if using neomake)
 "=================================================================
-let g:neomake_coffeescript_enabled_makers=['coffeelint']
-autocmd! BufWritePost * Neomake
+"let g:neomake_coffeescript_enabled_makers=['coffeelint']
+"autocmd! BufWritePost * Neomake
 
-" Neomake breaks live code reloading in Phoenix, so this is a
-" workaround found at https://github.com/phoenixframework/phoenix/issues/1165
-let g:neomake_elixir_enabled_makers = ['elixir']
-let g:neomake_elixir_elixir_maker = {
-      \ 'exe': 'elixirc',
-      \ 'args': [
-        \ '--ignore-module-conflict', '--warnings-as-errors',
-        \ '--app', 'mix', '--app', 'ex_unit',
-        \ '-o', '$TMPDIR', '%:p'
-      \ ],
-      \ 'errorformat':
-          \ '%E** %s %f:%l: %m,' .
-          \ '%W%f:%l'
-      \ }
+"" Neomake breaks live code reloading in Phoenix, so this is a
+"" workaround found at https://github.com/phoenixframework/phoenix/issues/1165
+"let g:neomake_elixir_enabled_makers = ['elixir']
+"let g:neomake_elixir_elixir_maker = {
+      "\ 'exe': 'elixirc',
+      "\ 'args': [
+        "\ '--ignore-module-conflict', '--warnings-as-errors',
+        "\ '--app', 'mix', '--app', 'ex_unit',
+        "\ '-o', '$TMPDIR', '%:p'
+      "\ ],
+      "\ 'errorformat':
+          "\ '%E** %s %f:%l: %m,' .
+          "\ '%W%f:%l'
+      "\ }
 
 "Deoplete
 let g:deoplete#enable_at_startup=1
