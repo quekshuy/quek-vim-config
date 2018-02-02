@@ -33,6 +33,8 @@ Plug 'qpkorr/vim-bufkill'
 Plug 'tpope/vim-eunuch'
 ":Linting
 Plug 'w0rp/ale'
+"Nix
+Plug 'LnL7/vim-nix'
 "NEOVIM specific plugins
 if has('nvim')
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
