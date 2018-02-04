@@ -134,6 +134,9 @@ nnoremap ˚ <C-w>k
 " Alt-l (on Mac)
 nnoremap ¬ <C-w>l
 
+" Adds a space after comment symbols
+let NERDSpaceDelims=1
+
 "=================================================================
 " NEOMAKE (uncomment if using neomake)
 "=================================================================
