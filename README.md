@@ -31,4 +31,24 @@ brew install python3
 pip3 install neovim
 ```
 
+_Note:_
+If you install miniconda, it will install its own copy of Python. Be sure to pip-install `neovim` again again.
+
+## (Optional) for Oni
+
+Oni might not be able to find your (custom) installation of Python3. Configure Oni with
+
+```javascript
+"environment.additionalPaths": [
+  // Custom path(s)
+  "/path/to/python3",
+
+  // the below are the defaults on Linux/macOS
+
+  "/usr/bin",
+  "/usr/local/bin"
+]
+```
+
+
 Enjoy.

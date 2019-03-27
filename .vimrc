@@ -7,40 +7,75 @@ let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 "PLUGINS via vim plug https://github.com/junegunn/vim-plug
 
 call plug#begin()
+
+" File search (Ctrl-P)
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all'  }
 Plug 'junegunn/fzf.vim'
+
+" GIT
 Plug 'tpope/vim-fugitive'
+":Gbrowse to open current file on github
+Plug 'tpope/vim-rhubarb'
+
+" Provide interface for interacting with git branches
+Plug 'idanarye/vim-merginal'
 Plug 'scrooloose/nerdcommenter'
-Plug 'kchmck/vim-coffee-script'
-Plug 'fatih/vim-go'
+
+" All the syntax highlighting
+Plug 'sheerun/vim-polyglot'
+
+" Ruby
 Plug 'tpope/vim-rails'
-Plug 'elixir-lang/vim-elixir'
+Plug 'vim-ruby/vim-ruby'
+Plug 'noprompt/vim-yardoc'
+
+" Javascript
+Plug 'pangloss/vim-javascript'
+Plug 'posva/vim-vue'
+
+" Generic coding
 Plug 'tpope/vim-surround'
 Plug 'alvan/vim-closetag'
 Plug 'tpope/vim-vinegar'
-" for automatically providing end-parentheses, etc
 Plug 'jiangmiao/auto-pairs'
 Plug 'machakann/vim-highlightedyank'
+
+" Other languages
 Plug 'avdgaag/vim-phoenix'
-Plug 'pangloss/vim-javascript'
-Plug 'vim-ruby/vim-ruby'
-Plug 'posva/vim-vue'
-":Gbrowse to open current file on github
-Plug 'tpope/vim-rhubarb'
+Plug 'kchmck/vim-coffee-script'
+Plug 'elixir-lang/vim-elixir'
+
 ":BD to close a buffer without closing the pane
 Plug 'qpkorr/vim-bufkill'
+
 ":Delete, :Rename
 Plug 'tpope/vim-eunuch'
+
 ":Linting
 Plug 'w0rp/ale'
-"Nix
-Plug 'LnL7/vim-nix'
+
+"Pretty
+Plug 'junegunn/goyo.vim'
+Plug 'junegunn/limelight.vim'
+
 "NEOVIM specific plugins
 if has('nvim')
-  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+  " Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+  " Autocompletion manager
+  Plug 'ncm2/ncm2'
+  " ncm2 dependency
+  Plug 'roxma/nvim-yarp' 
+  " ncm2 autocomplete sources
+  Plug 'ncm2/ncm2-bufword'
+  Plug 'ncm2/ncm2-path'
+  " LanguageServer client for NeoVim.
+  " For use with ncm2
+  Plug 'autozimu/LanguageClient-neovim', {
+    \ 'branch': 'next',
+    \ 'do': 'bash install.sh',
+    \ }
 endif
 call plug#end()
-
 
 set tabstop=2
 set shiftwidth=2
@@ -52,9 +87,6 @@ set showmatch
 set number
 "set encoding=utf-8
 set tags=./tags,tags
-set laststatus=2
-set statusline=%{fugitive#statusline()}
-set statusline+=%f
 "no end of file at the end of files
 set noeol
 
@@ -63,9 +95,6 @@ set clipboard=unnamed
 "Allows using mouse to set cursor when in Iterm
 set mouse=a
 
-"Set status line so current window is more visible
-hi StatusLine   ctermfg=15  guifg=#ffffff ctermbg=239 guibg=#4e4e4e cterm=bold gui=bold
-hi StatusLineNC ctermfg=249 guifg=#b2b2b2 ctermbg=237 guibg=#3a3a3a cterm=none gui=none
 
 nnoremap / /\v
 vnoremap / /\v
@@ -85,27 +114,114 @@ let g:netrw_winsize=25
 map <leader>n :Lexplore<cr>
 
 "Vim Closetag
-let g:closetag_filenames = "*.html,*.html.erb"
+let g:closetag_filenames = "*.html,*.html.erb,*.vue"
 
 "Deoplete use tab for running through autocomplete options
 inoremap <expr><tab> pumvisible() ? "\<c-n>" : "\<tab>"
 
-"Getting around tabs in neovim
+" new tab
 nnoremap <C-t> :tabnew<CR>
+"Getting around tabs in neovim
 nnoremap <S-h> :tabprev<cr>
 nnoremap <S-l> :tabnext<cr>
 
-nnoremap <leader>a :Ag<cr>
-nnoremap <C-p> :FZF<cr>
+
 nnoremap <leader>b :Buffers<cr>
 nnoremap <leader>w :Windows<cr>
 nnoremap <leader>g :Gstatus<cr>
+
+"=================================================================
+" NCM2 AUTOCOMPLETION
+"=================================================================
+if has('nvim')
+"ncm2 (autocomplete)
+autocmd BufEnter * call ncm2#enable_for_buffer()
+" IMPORTANT: :help Ncm2PopupOpen for more information
+set completeopt=noinsert,menuone,noselect
+let g:LanguageClient_serverCommands = {
+  \ 'typescript': ['javascript-typescript-stdio']
+  \ }
+endif
+
+"=================================================================
+" DEOPLETE OLD AUTOCOMPLETION
+"=================================================================
+"Deoplete (autocomplete)
+" let g:deoplete#enable_at_startup=1
+
+" Search all files using fzf + Ag
+nnoremap <leader>a :Ag<cr>
+" When using Ag to search, does not match file names, just file contents
+command! -bang -nargs=* Ag call fzf#vim#ag(<q-args>, {'options': '--delimiter : --nth 4..'}, <bang>0)
+
+"Experimenting with Oni (https://github.com/onivim/oni/wiki/Configuration),
+"which provides some IDE like features. We turn off these same IDE features
+"that exist in vim/neovim when Oni uses this config file.
+if exists("g:gui_oni")
+  "Getting around tabs in buffer mode in Onivim
+  nnoremap <S-h> :bprev<cr>
+  nnoremap <S-l> :bnext<cr>
+
+  " Totally hide the status bar
+  set laststatus=0
+  set noshowmode
+  set noruler
+  set noshowcmd
+
+  " Use Onivim's file search
+  " nnoremap <leader>a :call OniCommand('search.searchAllFiles')<cr>
+else
+
+  " Search for file using fzf
+  nnoremap <C-p> :FZF<cr>
+
+  " Always displays the status line
+  set laststatus=2
+  " Show git status in status line
+  set statusline=%{fugitive#statusline()}
+  set statusline+=%f
+
+  "Set status line so current window is more visible
+  hi StatusLine   ctermfg=15  guifg=#ffffff ctermbg=239 guibg=#4e4e4e cterm=bold gui=bold
+  hi StatusLineNC ctermfg=249 guifg=#b2b2b2 ctermbg=237 guibg=#3a3a3a cterm=none gui=none
+
+endif
 
 "Don't use vbufkill's keyboard mapping because
 "they slow down responsiveness of :Buffers
 let g:BufKillCreateMappings=0
 
+"=================================================================
+" VIM POLYGLOT SYNTAX HIGHLIGHTING
+"=================================================================
+syntax on
+" To disable polyglot highlighting
+"let g:polyglot_disabled = ['css']
+
+"=================================================================
+" NERD COMMENTER
+"=================================================================
+filetype plugin on
+" Adds a space after comment symbols
+let NERDSpaceDelims=1
+
+"=================================================================
+" ALE (LINTING)
+"=================================================================
+" Vuejs
+let g:ale_linter_aliases = { 'vue': ['vue', 'javascript']}
+let g:ale_fixers = { 'typescript': ['prettier'], 'javascript': ['prettier_standard'], 'python': ['autopep8'], 'ruby': ['standardrb'], '*': ['remove_trailing_lines', 'trim_whitespace'] }
+let g:ale_linters = {  'typescript': ['tslint'], 'javascript': ['standard'], 'ruby': ['standardrb'], 'python': ['pycodestyle'], 'vue': ['prettier_eslint', 'vls'] }
+let g:ale_javascript_prettier_eslint_options = '--semi false'
+" Automatic fixing on save
+" let g:ale_fix_on_save = 1
+
+
 if has('nvim')
+
+" Make vim limelight work
+set termguicolors
+
 "=================================================================
 " CHANGES FOR NVIM TERM EMULATOR
 "=================================================================
@@ -134,9 +250,6 @@ nnoremap ˚ <C-w>k
 " Alt-l (on Mac)
 nnoremap ¬ <C-w>l
 
-" Adds a space after comment symbols
-let NERDSpaceDelims=1
-
 "=================================================================
 " NEOMAKE (uncomment if using neomake)
 "=================================================================
@@ -158,11 +271,15 @@ let NERDSpaceDelims=1
           "\ '%W%f:%l'
       "\ }
 
-"Deoplete
-let g:deoplete#enable_at_startup=1
 
-au FileType python set omnifunc=pythoncomplete#Complete
-au FileType ruby setlocal nowrap
+
+"=================================================================
+" FILE TYPE SPECIFICS
+"=================================================================
+au FileType python setlocal sw=4 sts=4 ts=4 et
+au FileType ruby setlocal nowrap sw=2 sts=2 ts=2 et
+" From posva/vim-vue
+autocmd FileType vue syntax sync fromstart
 
 if has("gui_macvim")
 
@@ -189,4 +306,3 @@ if 'VIRTUAL_ENV' in os.environ:
 EOF
 
 endif
-
