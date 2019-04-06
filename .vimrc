@@ -24,6 +24,9 @@ Plug 'scrooloose/nerdcommenter'
 " All the syntax highlighting
 Plug 'sheerun/vim-polyglot'
 
+" Dockerfiles
+Plug 'ekalinin/Dockerfile.vim'
+
 " Ruby
 Plug 'tpope/vim-rails'
 Plug 'vim-ruby/vim-ruby'
@@ -61,13 +64,15 @@ Plug 'junegunn/limelight.vim'
 "NEOVIM specific plugins
 if has('nvim')
   " Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-  " Autocompletion manager
-  Plug 'ncm2/ncm2'
   " ncm2 dependency
   Plug 'roxma/nvim-yarp' 
+  " Autocompletion manager
+  Plug 'ncm2/ncm2'
   " ncm2 autocomplete sources
   Plug 'ncm2/ncm2-bufword'
   Plug 'ncm2/ncm2-path'
+  Plug 'fgrsnau/ncm-otherbuf', { 'branch': 'ncm2' }
+  Plug 'ncm2/ncm2-html-subscope'
   " LanguageServer client for NeoVim.
   " For use with ncm2
   Plug 'autozimu/LanguageClient-neovim', {
@@ -128,7 +133,9 @@ nnoremap <S-l> :tabnext<cr>
 
 nnoremap <leader>b :Buffers<cr>
 nnoremap <leader>w :Windows<cr>
-nnoremap <leader>g :Gstatus<cr>
+nnoremap <leader>g :Goyo<cr>
+nnoremap <leader>s :Gstatus<cr>
+
 
 "=================================================================
 " NCM2 AUTOCOMPLETION
@@ -138,10 +145,36 @@ if has('nvim')
 autocmd BufEnter * call ncm2#enable_for_buffer()
 " IMPORTANT: :help Ncm2PopupOpen for more information
 set completeopt=noinsert,menuone,noselect
+" TYPESCRIPT
+" yarn global add javascript-typescript-langserver
+"
+" RUBY (SOLARGRAPH) 
+" gem install solargraph
+"
+" VUE
+" yarn global add vue-language-server
+"
 let g:LanguageClient_serverCommands = {
-  \ 'typescript': ['javascript-typescript-stdio']
+  \ 'typescript': ['javascript-typescript-stdio'],
+  \ 'javascript': ['javascript-typescript-stdio'],
+  \ 'ruby': ['solargraph', 'stdio'],
+  \ 'vue': ['vls']
   \ }
+" Language servers need a settings file (similar to that in VSCode).
+let g:LanguageClient_settingsPath = '/Users/syquek/.vim/settings.json'
+" Uncomment the below to do debugging
+" let g:LanguageClient_windowLogMessageLevel = 'Log'
+" let g:LanguageClient_loggingLevel = 'DEBUG'
+" let g:LanguageClient_loggingFile = '/tmp/LanguageClient.log'
+
+nnoremap <leader>lh :call LanguageClient_textDocument_hover()<CR>
+nnoremap <leader>lr :call LanguageClient_textDocument_rename()<CR>
+nnoremap <leader>la :call LanguageClient_textDocument_codeAction()<CR>
+nnoremap <leader>ld :call LanguageClient_textDocument_definition()<CR>
+
+set signcolumn=yes
 endif
+
 
 "=================================================================
 " DEOPLETE OLD AUTOCOMPLETION
@@ -209,13 +242,27 @@ let NERDSpaceDelims=1
 " ALE (LINTING)
 "=================================================================
 " Vuejs
-let g:ale_linter_aliases = { 'vue': ['vue', 'javascript']}
-let g:ale_fixers = { 'typescript': ['prettier'], 'javascript': ['prettier_standard'], 'python': ['autopep8'], 'ruby': ['standardrb'], '*': ['remove_trailing_lines', 'trim_whitespace'] }
-let g:ale_linters = {  'typescript': ['tslint'], 'javascript': ['standard'], 'ruby': ['standardrb'], 'python': ['pycodestyle'], 'vue': ['prettier_eslint', 'vls'] }
-let g:ale_javascript_prettier_eslint_options = '--semi false'
+let g:ale_linter_aliases = { 'vue': ['vue', 'javascript', 'scss'] }
+let g:ale_fixers = {
+      \ 'typescript': ['prettier'],
+      \ 'javascript': ['prettier_standard'],
+      \ 'python': ['autopep8'],
+      \ 'ruby': ['standardrb'], 
+      \ 'vue': ['eslint'],
+      \ '*': ['remove_trailing_lines', 'trim_whitespace'] 
+      \ }
+let g:ale_linters = {
+      \ 'typescript': ['tslint'],
+      \ 'javascript': ['standard'],
+      \ 'ruby': ['standardrb'],
+      \ 'python': ['pycodestyle'],
+      \ 'vue': ['eslint'] 
+      \ }
+let g:ale_vue_eslint_options = '--fix'
+" Specify options to the linters
+" let g:ale_vue_vls_options = "--stdio"
 " Automatic fixing on save
 " let g:ale_fix_on_save = 1
-
 
 if has('nvim')
 
