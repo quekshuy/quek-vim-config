@@ -47,6 +47,7 @@ Plug 'machakann/vim-highlightedyank'
 Plug 'avdgaag/vim-phoenix'
 Plug 'kchmck/vim-coffee-script'
 Plug 'elixir-lang/vim-elixir'
+Plug 'delphinus/vim-firestore'
 
 ":BD to close a buffer without closing the pane
 Plug 'qpkorr/vim-bufkill'
@@ -65,7 +66,7 @@ Plug 'junegunn/limelight.vim'
 if has('nvim')
   " Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
   " ncm2 dependency
-  Plug 'roxma/nvim-yarp' 
+  Plug 'roxma/nvim-yarp'
   " Autocompletion manager
   Plug 'ncm2/ncm2'
   " ncm2 autocomplete sources
@@ -145,36 +146,40 @@ if has('nvim')
 autocmd BufEnter * call ncm2#enable_for_buffer()
 " IMPORTANT: :help Ncm2PopupOpen for more information
 set completeopt=noinsert,menuone,noselect
-" TYPESCRIPT
+" JAVASCRIPT
 " yarn global add javascript-typescript-langserver
 "
-" RUBY (SOLARGRAPH) 
+" TYPESCRIPT
+" yarn global add typescript-language-server
+"
+" RUBY (SOLARGRAPH)
 " gem install solargraph
 "
 " VUE
 " yarn global add vue-language-server
 "
 let g:LanguageClient_serverCommands = {
-  \ 'typescript': ['javascript-typescript-stdio'],
+  \ 'typescript': ['typescript-language-server', '--stdio'],
   \ 'javascript': ['javascript-typescript-stdio'],
+  \ 'javascript.jsx': ['javascript-typescript-stdio'],
   \ 'ruby': ['solargraph', 'stdio'],
   \ 'vue': ['vls']
   \ }
 " Language servers need a settings file (similar to that in VSCode).
 let g:LanguageClient_settingsPath = '/Users/syquek/.vim/settings.json'
 " Uncomment the below to do debugging
-" let g:LanguageClient_windowLogMessageLevel = 'Log'
-" let g:LanguageClient_loggingLevel = 'DEBUG'
-" let g:LanguageClient_loggingFile = '/tmp/LanguageClient.log'
+"let g:LanguageClient_windowLogMessageLevel = 'Log'
+"let g:LanguageClient_loggingLevel = 'DEBUG'
+"let g:LanguageClient_loggingFile = '/tmp/LanguageClient.log'
 
 nnoremap <leader>lh :call LanguageClient_textDocument_hover()<CR>
 nnoremap <leader>lr :call LanguageClient_textDocument_rename()<CR>
 nnoremap <leader>la :call LanguageClient_textDocument_codeAction()<CR>
 nnoremap <leader>ld :call LanguageClient_textDocument_definition()<CR>
 
+" Puts a column to the left of line numbers
 set signcolumn=yes
 endif
-
 
 "=================================================================
 " DEOPLETE OLD AUTOCOMPLETION
@@ -182,10 +187,12 @@ endif
 "Deoplete (autocomplete)
 " let g:deoplete#enable_at_startup=1
 
-" Search all files using fzf + Ag
-nnoremap <leader>a :Ag<cr>
+" Search all files using fzf + ripgrep
+nnoremap <leader>a :Rg<cr>
+" When using Rg to search, does not match file names, just file contents
+command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>), 1, {'options': '--delimiter : --nth 4..'}, <bang>0)
 " When using Ag to search, does not match file names, just file contents
-command! -bang -nargs=* Ag call fzf#vim#ag(<q-args>, {'options': '--delimiter : --nth 4..'}, <bang>0)
+"command! -bang -nargs=* Ag call fzf#vim#ag(<q-args>, {'options': '--delimiter : --nth 4..'}, <bang>0)
 
 "Experimenting with Oni (https://github.com/onivim/oni/wiki/Configuration),
 "which provides some IDE like features. We turn off these same IDE features
@@ -241,29 +248,44 @@ let NERDSpaceDelims=1
 "=================================================================
 " ALE (LINTING)
 "=================================================================
-" Vuejs
+" Instructions for installing linters/fixers:
+"
+" JAVASCRIPT
+" > yarn global add prettier prettier-standard eslint
+"
+" RUBY
+" > sudo gem install standard
+"
+" CSS
+" > yarn global add stylelint stylelint-scss
 let g:ale_linter_aliases = { 'vue': ['vue', 'javascript', 'scss'] }
 let g:ale_fixers = {
       \ 'typescript': ['prettier'],
-      \ 'javascript': ['prettier_standard'],
+      \ 'javascript': ['prettier'],
       \ 'python': ['autopep8'],
-      \ 'ruby': ['standardrb'], 
-      \ 'vue': ['eslint'],
-      \ '*': ['remove_trailing_lines', 'trim_whitespace'] 
+      \ 'ruby': ['standardrb'],
+      \ 'vue': ['eslint','prettier'],
+      \ 'dockerfile': ['hadolint'],
+      \ '*': ['remove_trailing_lines', 'trim_whitespace']
       \ }
 let g:ale_linters = {
-      \ 'typescript': ['tslint'],
-      \ 'javascript': ['standard'],
+      \ 'typescript': ['eslint'],
+      \ 'javascript': ['eslint'],
       \ 'ruby': ['standardrb'],
       \ 'python': ['pycodestyle'],
-      \ 'vue': ['eslint'] 
+      \ 'vue': ['eslint', 'stylelint', 'prettier']
       \ }
-let g:ale_vue_eslint_options = '--fix'
-" Specify options to the linters
-" let g:ale_vue_vls_options = "--stdio"
-" Automatic fixing on save
-" let g:ale_fix_on_save = 1
 
+" Specify options to the linters
+" let g:ale_vue_eslint_options = '--fix'
+" let g:ale_vue_vls_options = '--stdio'
+
+" Automatic fixing on save
+let g:ale_fix_on_save = 1
+
+"=================================================================
+" OTHER NEOVIM SPECIFIC CHANGES
+"=================================================================
 if has('nvim')
 
 " Make vim limelight work
@@ -286,6 +308,7 @@ tnoremap ∆ <C-\><C-n><C-w>j
 tnoremap ˚ <C-\><C-n><C-w>k
 " Alt-l (on Mac)
 tnoremap ¬ <C-\><C-n><C-w>l
+
 endif
 
 " Alt-h (on Mac)
@@ -327,6 +350,9 @@ au FileType python setlocal sw=4 sts=4 ts=4 et
 au FileType ruby setlocal nowrap sw=2 sts=2 ts=2 et
 " From posva/vim-vue
 autocmd FileType vue syntax sync fromstart
+" Dockerfile
+au BufRead,BufNewFile *.docker setfiletype Dockerfile
+
 
 if has("gui_macvim")
 
