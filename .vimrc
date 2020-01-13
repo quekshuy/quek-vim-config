@@ -52,6 +52,10 @@ Plug 'delphinus/vim-firestore'
 ":BD to close a buffer without closing the pane
 Plug 'qpkorr/vim-bufkill'
 
+" Alter commands in vimscript/.vimrc file
+" Allow us to rewrite some predefined commands.
+Plug 'kana/vim-altercmd'
+
 ":Delete, :Rename
 Plug 'tpope/vim-eunuch'
 
@@ -188,11 +192,15 @@ endif
 " let g:deoplete#enable_at_startup=1
 
 " Search all files using fzf + ripgrep
-nnoremap <leader>a :Rg<cr>
-" When using Rg to search, does not match file names, just file contents
-command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>), 1, {'options': '--delimiter : --nth 4..'}, <bang>0)
-" When using Ag to search, does not match file names, just file contents
-"command! -bang -nargs=* Ag call fzf#vim#ag(<q-args>, {'options': '--delimiter : --nth 4..'}, <bang>0)
+if exists("g:vscode")
+  nnoremap <leader>a :<C-u>call VSCodeNotify('workbench.action.findInFiles')<cr>
+else
+  nnoremap <leader>a :Rg<cr>
+  " When using Rg to search, does not match file names, just file contents
+  command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>), 1, {'options': '--delimiter : --nth 4..'}, <bang>0)
+  " When using Ag to search, does not match file names, just file contents
+  "command! -bang -nargs=* Ag call fzf#vim#ag(<q-args>, {'options': '--delimiter : --nth 4..'}, <bang>0)
+endif
 
 "Experimenting with Oni (https://github.com/onivim/oni/wiki/Configuration),
 "which provides some IDE like features. We turn off these same IDE features
@@ -210,6 +218,17 @@ if exists("g:gui_oni")
 
   " Use Onivim's file search
   " nnoremap <leader>a :call OniCommand('search.searchAllFiles')<cr>
+elseif exists("g:vscode")
+"Experimenting with VS Code with the Neovim plugin from the extension
+"marketplace
+
+  " Close tabs with :bd
+  command! -bang VscodeTabclose call VSCodeNotify('workbench.action.closeActiveEditor')
+  AlterCommand bd VscodeTabclose
+
+  command! VscodeOpenTerminal call VSCodeNotify('workbench.action.terminal.toggleTerminal')
+  AlterCommand term[inal] VscodeOpenTerminal
+
 else
 
   " Search for file using fzf
