@@ -244,8 +244,6 @@ tnoremap ˚ <C-\><C-n><C-w>k
 " Alt-l (on Mac)
 tnoremap ¬ <C-\><C-n><C-w>l
 
-endif
-
 " Alt-h (on Mac)
 nnoremap ˙ <C-w>h
 " Alt-j (on Mac)
