@@ -1,0 +1,12 @@
+" Vim plug plugins
+" call plug#begin()
+" call plug#end()
+
+nnoremap <leader>a :<C-u>call VSCodeNotify('workbench.action.findInFiles')<cr>
+
+" Close tabs with :bd
+command! -bang VscodeTabclose call VSCodeNotify('workbench.action.closeActiveEditor')
+AlterCommand bd VscodeTabclose
+
+command! VscodeOpenTerminal call VSCodeNotify('workbench.action.terminal.toggleTerminal')
+AlterCommand term[inal] VscodeOpenTerminal
