@@ -1,9 +1,3 @@
-" UI
-colorscheme onedark
-set guifont=Hack:h16
-let $NVIM_TUI_ENABLE_TRUE_COLOR=1
-" Make vim limelight work
-set termguicolors
 
 " Vim plug plugins
 call plug#begin()
@@ -60,8 +54,46 @@ call plug#begin()
   "Pretty
   Plug 'junegunn/goyo.vim'
   Plug 'junegunn/limelight.vim'
+  " Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+  " ncm2 dependency
+  Plug 'roxma/nvim-yarp'
+  " Autocompletion manager
+  Plug 'ncm2/ncm2'
+  " ncm2 autocomplete sources
+  Plug 'ncm2/ncm2-bufword'
+  Plug 'ncm2/ncm2-path'
+  Plug 'fgrsnau/ncm-otherbuf', { 'branch': 'ncm2' }
+  Plug 'ncm2/ncm2-html-subscope'
+  " LanguageServer client for NeoVim.
+  " For use with ncm2
+  Plug 'autozimu/LanguageClient-neovim', {
+        \ 'branch': 'next',
+        \ 'do': 'bash install.sh',
+        \ }
+
+  " UI Plugins
+  Plug 'vim-airline/vim-airline'
+  Plug 'vim-airline/vim-airline-themes'
+  " color scheme
+  " Plug 'drewtempelmeyer/palenight.vim'
+  Plug 'sonph/onehalf', { 'rtp': 'vim/' }
 call plug#end()
 
+" UI
+colorscheme onehalfdark
+let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+if has('termguicolors')
+  " Make vim limelight work
+  set termguicolors
+end
+let g:airline_theme='onehalfdark'
+
+" Python is needed but not picked up automatically in
+" vimr when using pyenv
+let g:python3_host_prog = expand('~/.pyenv/shims/python3')
+
+
+" Editor
 set tabstop=2
 set shiftwidth=2
 set softtabstop=2
@@ -108,11 +140,19 @@ nnoremap <C-t> :tabnew<CR>
 nnoremap <S-h> :tabprev<cr>
 nnoremap <S-l> :tabnext<cr>
 
+
 nnoremap <leader>b :Buffers<cr>
 nnoremap <leader>w :Windows<cr>
 nnoremap <leader>g :Goyo<cr>
 nnoremap <leader>s :Gstatus<cr>
 
+"=================================================================
+" NCM2 AUTOCOMPLETION
+"=================================================================
+"ncm2 (autocomplete)
+autocmd BufEnter * call ncm2#enable_for_buffer()
+" IMPORTANT: :help Ncm2PopupOpen for more information
+set completeopt=noinsert,menuone,noselect
 " JAVASCRIPT
 " yarn global add javascript-typescript-langserver
 "
@@ -147,14 +187,15 @@ nnoremap <leader>ld :call LanguageClient_textDocument_definition()<CR>
 " Puts a column to the left of line numbers
 set signcolumn=yes
 
+"=================================================================
+" QUICK OPEN
+"=================================================================
+nnoremap <C-p> :FZF<cr>
 
 "=================================================================
 " FILE SEARCH
 "=================================================================
-" Search for file using fzf
-nnoremap <C-p> :FZF<cr>
 " Search all files using fzf + ripgrep
-" Remember to install fzf and ripgrep
 nnoremap <leader>a :Rg<cr>
 " When using Rg to search, does not match file names, just file contents
 command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>), 1, {'options': '--delimiter : --nth 4..'}, <bang>0)
@@ -167,6 +208,7 @@ command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-hea
 "Don't use vbufkill's keyboard mapping because
 "they slow down responsiveness of :Buffers
 let g:BufKillCreateMappings=0
+
 
 "=================================================================
 " VIM POLYGLOT SYNTAX HIGHLIGHTING
@@ -202,7 +244,7 @@ let g:ale_fixers = {
       \ 'javascript': ['prettier'],
       \ 'python': ['autopep8'],
       \ 'ruby': ['standardrb'],
-      \ 'vue': ['eslint','prettier'],
+      \ 'vue': ['prettier'],
       \ 'dockerfile': ['hadolint'],
       \ '*': ['remove_trailing_lines', 'trim_whitespace']
       \ }
@@ -211,7 +253,7 @@ let g:ale_linters = {
       \ 'javascript': ['eslint'],
       \ 'ruby': ['standardrb'],
       \ 'python': ['pycodestyle'],
-      \ 'vue': ['eslint', 'stylelint', 'prettier']
+      \ 'vue': ['prettier']
       \ }
 
 " Specify options to the linters
@@ -222,8 +264,11 @@ let g:ale_linters = {
 let g:ale_fix_on_save = 1
 
 "=================================================================
-" WINDOW PANE MANAGEMENT
+" CHANGES FOR NVIM TERM EMULATOR
 "=================================================================
+" Easy entrance into terminal mode
+nnoremap <leader>t :vsp \| :term<cr>
+
 " Map Alt-{h,j,k,l} in all modes to easily move between panes
 " read this for how to map Alt-keys on a Mac
 " http://stackoverflow.com/questions/7501092/can-i-map-alt-key-in-vim
@@ -256,15 +301,32 @@ autocmd FileType vue syntax sync fromstart
 au BufRead,BufNewFile *.docker setfiletype Dockerfile
 
 "=================================================================
-" MISCELLANEOUS
+" ONI VIM VS NORMAL NEOVIM
 "=================================================================
+" Experimenting with Oni (https://github.com/onivim/oni/wiki/Configuration),
+" which provides some IDE like features. We turn off these same IDE features
+" that exist in vim/neovim when Oni uses this config file.
+"
+" 1. Use Oni's file search instead of fzf for opening files.
+if exists("g:gui_oni")
+  "Getting around tabs in buffer mode in Onivim
+  nnoremap <S-h> :bprev<cr>
+  nnoremap <S-l> :bnext<cr>
 
-" Always displays the status line
-set laststatus=2
-" Show git status in status line
-set statusline=%{fugitive#statusline()}
-set statusline+=%f
+  " Totally hide the status bar
+  set laststatus=0
+  set noshowmode
+  set noruler
+  set noshowcmd
+else
+  " Always displays the status line
+  set laststatus=2
+  " Show git status in status line
+  set statusline=%{fugitive#statusline()}
+  set statusline+=%f
 
-"Set status line so current window is more visible
-hi StatusLine   ctermfg=15  guifg=#ffffff ctermbg=239 guibg=#4e4e4e cterm=bold gui=bold
-hi StatusLineNC ctermfg=249 guifg=#b2b2b2 ctermbg=237 guibg=#3a3a3a cterm=none gui=none
+  "Set status line so current window is more visible
+  hi StatusLine   ctermfg=15  guifg=#ffffff ctermbg=239 guibg=#4e4e4e cterm=bold gui=bold
+  hi StatusLineNC ctermfg=249 guifg=#b2b2b2 ctermbg=237 guibg=#3a3a3a cterm=none gui=none
+
+endif

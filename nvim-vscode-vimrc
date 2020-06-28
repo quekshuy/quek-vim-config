@@ -2,11 +2,25 @@
 " call plug#begin()
 " call plug#end()
 
+" This remapping because neovim vscode has already mapped it to something
+" else. Use :enew
+nnoremap <C-t> :<C-u>call VSCodeNotify('workbench.action.newWindowTab')<cr>
 nnoremap <leader>a :<C-u>call VSCodeNotify('workbench.action.findInFiles')<cr>
+nnoremap <leader>b :<C-u>call VSCodeNotify('workbench.action.showEditorsInActiveGroup')<cr>
+
+" Git commands for parity with vim fugitive
+command! VscodeStageChangesInCurrentFile call VSCodeNotify('git.stage')
+AlterCommand Gwrite VscodeStageChangesInCurrentFile
+command! VscodeCommitStagedChanges call VSCodeNotify('git.commitStaged')
+AlterCommand Gcommit VscodeCommitStagedChanges
+command! VscodeGitlensToggleFileBlame call VSCodeNotify('gitlens.toggleFileBlame')
+AlterCommand Gblame  VscodeGitlensToggleFileBlame
 
 " Close tabs with :bd
 command! -bang VscodeTabclose call VSCodeNotify('workbench.action.closeActiveEditor')
 AlterCommand bd VscodeTabclose
+command! -bang VscodeTabcloseAll call VSCodeNotify('workbench.action.closeAllEditors')
+AlterCommand %bd VscodeTabcloseAll
 
 command! VscodeOpenTerminal call VSCodeNotify('workbench.action.terminal.toggleTerminal')
 AlterCommand term[inal] VscodeOpenTerminal
