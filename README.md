@@ -18,10 +18,6 @@ ln -s /path/to/repo ~/.vim
 ln -s /path/to/repo ~/.config/nvim
 ```
 
-```bash
-ln -s /path/to/repo/.vimrc ~/.config/nvim/init.vim
-```
-
 Then launch `vim` (or `nvim`) and `:PlugInstall`.
 
 Also recommended you install the python client for neovim. We use an autocompletion plugin called deoplete that requires it.
