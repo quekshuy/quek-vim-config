@@ -154,8 +154,7 @@ vim.opt.tags = './tags,tags'
 -- "no end of file at the end of files
 -- set noeol
 -- this is the only way to do it in Lua
--- vim.opt.noeol = true doesn't work
-vim.api.nvim_command("set noeol")
+vim.opt.eol = false
 
 -- "Allow yank to macOS clipboard as well
 -- set clipboard=unnamed
@@ -166,9 +165,9 @@ vim.opt.mouse = 'a'
 
 -- nnoremap / /\v
 --             <mode>  <keys>  <actions>   <options>
-vim.keymap.set('n',    '/',    '/\v',      { noremap = true })
+vim.keymap.set('n',    '/',    '/\\v',      { noremap = true })
 -- vnoremap / /\v
-vim.keymap.set('v',    '/',    '/\v',      { noremap = true })
+vim.keymap.set('v',    '/',    '/\\v',      { noremap = true })
 -- nnoremap <up> <nop>
 -- nnoremap <down> <nop>
 -- nnoremap <left> <nop>
@@ -212,26 +211,39 @@ vim.keymap.set('n', '<S-l>', ':tabnext<CR>', { noremap = true })
 vim.keymap.set('n', '<Leader>g', ':Goyo<CR>', { noremap = true })
 
 
--- neovim Theme
--- neovim Theme
+-- ======================================
+-- THEMING
+-- ======================================
 require('onedark').setup {
   style = 'warmer'
 }
 require('onedark').load()
 
+-- ======================================
+-- SYNTAX HIGHLIGHTING
+-- ======================================
 -- nvim-treesitter syntax highlighting
 require('nvim-treesitter.configs').setup {
   ensure_installed = { 'lua', 'python', 'typescript', 'javascript', 'ruby', 'elixir'  },
+  highlight = {
+    enable = true,
+  },
   endwise = {
     enable = true
   },
 }
 
+-- ====================================================
+-- (BRACKET) PAIRING
+-- ====================================================
 local npairs = require('nvim-autopairs')
 npairs.setup({
   disable_filetype = { "TelescopePrompt" , "vim" },
 })
 
+-- ====================================================
+-- TELESCOPE CONFIG
+-- ====================================================
 require"telescope".setup {
   extensions = {
     fzf = {
@@ -246,21 +258,21 @@ require"telescope".setup {
 -- To get fzf loaded and working with telescope, you need to call
 -- load_extension, somewhere after setup function:
 require('telescope').load_extension('fzf')
-
--- " Import Lua based configs
--- " custom-nvim-cmp must come first because custom-lsp-config relies on it.
-require('custom-nvim-cmp')
-require("custom-lsp-config")
-
--- "=================================================================
--- " NVIM-TELESCOPE
--- "=================================================================
 -- nnoremap <C-p> <cmd>lua require('telescope.builtin').find_files()<cr>
 -- nnoremap <leader>b <cmd>lua require('telescope.builtin').buffers()<cr>
 -- nnoremap <leader>a <cmd>lua require('telescope.builtin').live_grep()<cr>
 vim.keymap.set('n', '<C-p>', function() require('telescope.builtin').find_files() end, { noremap = true })
 vim.keymap.set('n', '<Leader>b', function() require('telescope.builtin').buffers() end, { noremap = true })
 vim.keymap.set('n', '<Leader>a', function() require('telescope.builtin').live_grep() end, { noremap = true })
+
+-- ====================================================
+-- LSP CONFIG
+-- ====================================================
+-- " Import Lua based configs
+-- " custom-nvim-cmp must come first because custom-lsp-config relies on it.
+require('custom-nvim-cmp')
+require("custom-lsp-config")
+
 
 -- " Puts a column to the left of line numbers
 -- set signcolumn=yes
@@ -274,16 +286,6 @@ vim.opt.signcolumn = 'yes'
 -- let g:BufKillCreateMappings=0
 vim.g.BufKillCreateMappings = 0
 
-
--- "=================================================================
--- " VIM POLYGLOT SYNTAX HIGHLIGHTING
--- "=================================================================
--- syntax on enabled by default
--- syntax on
--- " To disable polyglot highlighting
--- "let g:polyglot_disabled = ['css']
-vim.g.polyglot_disabled = { 'css' }
-
 -- ----------------------------------------
 -- NERD COMMENTER
 -- ----------------------------------------
@@ -291,8 +293,6 @@ vim.g.polyglot_disabled = { 'css' }
 -- " Adds a space after comment symbols
 vim.g.NERDSpaceDelims = 1
 
-
--- DEPRECATE IN NEOVIM
 
 -- "=================================================================
 -- " CHANGES FOR NVIM TERM EMULATOR
@@ -344,7 +344,7 @@ end
 
 -- au FileType ruby setlocal nowrap sw=2 sts=2 ts=2 et
 vim.api.nvim_create_autocmd('FileType', { pattern = 'ruby', callback = function() 
-  vim.opt_local.nowrap = true
+  vim.opt_local.wrap = false
   vim.opt_local.sw = 2 
   vim.opt_local.sts = 2
   vim.opt_local.ts = 2
@@ -358,9 +358,10 @@ vim.api.nvim_create_autocmd('FileType', { pattern = 'vue', command = 'syntax syn
 -- au BufRead,BufNewFile *.docker setfiletype Dockerfile
 vim.api.nvim_create_autocmd('BufRead,BufNewFile', { pattern = '*.docker', command = 'setfiletype Dockerfile' })
 
+-- =================================================
+-- STATUS LINE
+-- =================================================
 -- " Always displays the status line
 -- set laststatus=2
 vim.opt.laststatus = 2
-
--- STATUS LINE
 require('lualine').setup()
